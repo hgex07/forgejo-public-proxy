@@ -1,0 +1,16 @@
+{{define "title"}}{{.T .Data.TitleKey}} · {{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+<ul class="ref-list">
+{{- range .Data.Refs}}
+  <li>
+    <h3>{{if eq .Kind "tag"}}{{template "icon-tag"}}{{else}}{{template "icon-branch"}}{{end}} <a href="{{.TreeURL}}">{{.Public}}</a>{{if .IsDefault}} <span class="badge">{{$.T "default"}}</span>{{end}}</h3>
+    {{- with .TagMessage}}<p>{{.}}</p>{{end}}
+    <p class="meta">
+      {{- with .Tip}}{{if .URL}}<a class="sha" href="{{.URL}}">{{.Short}}</a>{{else}}<span class="sha">{{.Short}}</span>{{end}}{{with .Date}} · <time>{{.}}</time>{{end}}{{end}}
+      {{- range .Archives}} · <a href="{{.URL}}" download>{{.Name}}</a>{{end}}
+    </p>
+  </li>
+{{- end}}
+</ul>
+{{end}}

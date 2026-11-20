@@ -1,0 +1,49 @@
+{{define "title"}}{{.Data.Path}} · {{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+<div class="toolbar">
+  {{template "ref-picker" .}}
+  {{template "breadcrumb" .}}
+</div>
+<div class="file">
+  <div class="file-head">
+    <span class="file-info">
+      {{- if .Data.Lines}}{{.T "n_lines" .Data.Lines}} · {{end}}{{.Data.Size}}{{with .Data.Language}} · {{.}}{{end}}
+    </span>
+    <span class="file-actions">
+      {{- if .Data.RenderedURL}}<a href="{{.Data.RenderedURL}}"{{if not .Data.Source}} aria-current="page"{{end}}>{{.T "preview"}}</a> <a href="{{.Data.SourceURL}}"{{if .Data.Source}} aria-current="page"{{end}}>{{.T "source"}}</a>{{end}}
+      {{- with .Data.RawURL}} <a href="{{.}}">{{$.T "raw"}}</a>{{end}}
+      {{- with .Data.MediaURL}} <a href="{{.}}">{{$.T "raw"}}</a>{{end}}
+      {{- with .Data.DownloadURL}} <a href="{{.}}" download>{{template "icon-download"}} {{$.T "download"}}</a>{{end}}
+    </span>
+  </div>
+  {{- if .Data.Bidi}}
+  <p class="banner warn">{{template "icon-warn"}} {{.T "bidi_warning"}}</p>
+  {{- end}}
+  {{- if .Data.SymlinkTarget}}
+  <p class="file-note">{{template "icon-link"}} {{.T "symlink_to"}} <code>{{.Data.SymlinkTarget}}</code></p>
+  {{- else if .Data.Submodule}}
+  <p class="file-note">{{template "icon-module"}} {{.T "submodule_at" .Data.Submodule}}</p>
+  {{- else if .Data.LFS}}
+  <p class="file-note">{{.T "stored_lfs"}}</p>
+  {{- else if .Data.ImageURL}}
+  <div class="file-image"><img src="{{.Data.ImageURL}}" alt="{{.Data.Name}}"></div>
+  {{- else if .Data.Binary}}
+  <p class="file-note">{{.T "binary_file"}}</p>
+  {{- else if .Data.TooLarge}}
+  <p class="file-note">{{.T "file_too_large"}}</p>
+  {{- else if not .Data.Markdown.IsZero}}
+  <article class="markdown">{{.Data.Markdown.HTML}}</article>
+  {{- else if .Data.Code}}
+  <table class="code hl">
+    <tbody>
+    {{- range $i, $l := .Data.Code}}{{$n := inc $i}}
+      <tr id="L{{$n}}"><td class="ln"><a href="#L{{$n}}">{{$n}}</a></td><td class="lc">{{$l.HTML}}</td></tr>
+    {{- end}}
+    </tbody>
+  </table>
+  {{- else}}
+  <p class="file-note">{{.T "empty_file"}}</p>
+  {{- end}}
+</div>
+{{end}}

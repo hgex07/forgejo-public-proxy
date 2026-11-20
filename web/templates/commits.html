@@ -1,0 +1,27 @@
+{{define "title"}}{{.T "tab_commits"}} · {{.Ref.Public}} · {{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+<div class="toolbar">
+  {{template "ref-picker" .}}
+</div>
+{{- range .Data.Days}}
+<section class="commit-day">
+  <h2><time datetime="{{.ISO}}">{{$.T "commits_on" .Label}}</time></h2>
+  <ul class="commit-list">
+  {{- range .Commits}}
+    <li>
+      <a class="msg" href="{{.URL}}">{{.Subject}}</a>
+      <p class="meta">{{if .Author}}<span class="author">{{.Author}}</span> · {{end}}<a class="sha" href="{{.URL}}">{{.Short}}</a>{{if $.Data.ShowTime}} · <time datetime="{{.DateISO}}">{{.Date}}</time>{{end}}</p>
+    </li>
+  {{- end}}
+  </ul>
+</section>
+{{- end}}
+<nav class="pager" aria-label="{{.T "pagination"}}">
+  {{- with .Data.Newer}}<a href="{{.}}">{{$.T "newer"}}</a>{{end}}
+  {{- with .Data.Older}}<a href="{{.}}">{{$.T "older"}}</a>{{end}}
+</nav>
+{{- if .Data.Truncated}}
+<p class="history-end muted">{{.T "older_history_hidden"}}</p>
+{{- end}}
+{{end}}

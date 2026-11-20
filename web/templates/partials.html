@@ -1,0 +1,101 @@
+{{define "icon-dir"}}<svg class="icon icon-dir" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>{{end}}
+{{define "icon-file"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>{{end}}
+{{define "icon-link"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>{{end}}
+{{define "icon-module"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>{{end}}
+{{define "icon-tag"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/></svg>{{end}}
+{{define "icon-branch"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>{{end}}
+{{define "icon-commit"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></svg>{{end}}
+{{define "icon-download"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>{{end}}
+{{define "icon-warn"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>{{end}}
+
+{{define "repo-header"}}{{$r := .Repo}}
+<div class="repo-header">
+  <h1 class="repo-title"><a href="{{$r.HomeURL}}"><span class="repo-owner">{{$r.Owner}}</span> / <strong>{{$r.Name}}</strong></a>
+  {{- if $r.Archived}} <span class="badge">{{.T "archived"}}</span>{{end}}</h1>
+  {{with $r.Description}}<p class="repo-desc">{{.}}</p>{{end}}
+  <nav class="tabs" aria-label="{{.T "repository"}}">
+    <a href="{{$r.HomeURL}}"{{if eq .Tab "code"}} aria-current="page"{{end}}>{{template "icon-file"}} {{.T "tab_code"}}</a>
+    {{- if $r.HasCommits}}
+    <a href="{{$r.CommitsURL}}"{{if eq .Tab "commits"}} aria-current="page"{{end}}>{{template "icon-commit"}} {{.T "tab_commits"}}</a>
+    {{- end}}
+    <a href="{{$r.BranchesURL}}"{{if eq .Tab "branches"}} aria-current="page"{{end}}>{{template "icon-branch"}} {{.T "tab_branches"}} <span class="count">{{$r.NumBranches}}</span></a>
+    {{- if $r.NumTags}}
+    <a href="{{$r.TagsURL}}"{{if eq .Tab "tags"}} aria-current="page"{{end}}>{{template "icon-tag"}} {{.T "tab_tags"}} <span class="count">{{$r.NumTags}}</span></a>
+    {{- end}}
+    {{- if $r.ReleasesEnabled}}
+    <a href="{{$r.ReleasesURL}}"{{if eq .Tab "releases"}} aria-current="page"{{end}}>{{template "icon-tag"}} {{.T "tab_releases"}} <span class="count">{{$r.NumReleases}}</span></a>
+    {{- end}}
+  </nav>
+</div>
+{{end}}
+
+{{define "ref-picker"}}
+<details class="ref-picker">
+  <summary>{{if eq .Ref.Kind "tag"}}{{template "icon-tag"}}{{else}}{{template "icon-branch"}}{{end}} {{.Ref.Public}}</summary>
+  <div class="ref-menu">
+    {{- with .Repo.Branches}}
+    <p class="ref-menu-head">{{$.T "tab_branches"}}</p>
+    <ul>{{range .}}<li><a href="{{.TreeURL}}"{{if eq .Public $.Ref.Public}} aria-current="true"{{end}}>{{.Public}}</a></li>{{end}}</ul>
+    {{- end}}
+    {{- with .Repo.Tags}}
+    <p class="ref-menu-head">{{$.T "tab_tags"}}</p>
+    <ul>{{range .}}<li><a href="{{.TreeURL}}"{{if eq .Public $.Ref.Public}} aria-current="true"{{end}}>{{.Public}}</a></li>{{end}}</ul>
+    {{- end}}
+  </div>
+</details>
+{{end}}
+
+{{define "breadcrumb"}}
+<nav class="breadcrumb" aria-label="{{.T "path"}}">
+  {{- range $i, $c := .Crumbs}}{{if $i}}<span class="sep">/</span>{{end}}{{if $c.URL}}<a href="{{$c.URL}}">{{$c.Name}}</a>{{else}}<strong>{{$c.Name}}</strong>{{end}}{{end}}
+</nav>
+{{end}}
+
+{{define "commit-strip"}}{{with .Ref.Tip}}
+<div class="commit-strip">
+  {{- if .Author}}<span class="author">{{.Author}}</span>{{end}}
+  {{if .URL}}<a class="msg" href="{{.URL}}">{{.Subject}}</a> <a class="sha" href="{{.URL}}">{{.Short}}</a>{{else}}<span class="sha">{{.Short}}</span>{{end}}
+  {{- if .Date}} <time datetime="{{.DateISO}}">{{.Date}}</time>{{end}}
+</div>
+{{end}}{{end}}
+
+{{define "sidebar"}}{{$r := .Repo}}
+<aside class="sidebar">
+  <section>
+    <h2>{{.T "about"}}</h2>
+    {{if $r.Description}}<p>{{$r.Description}}</p>{{else}}<p class="muted">{{.T "no_description"}}</p>{{end}}
+    {{with $r.Website}}<p class="website">{{template "icon-link"}} <a href="{{.}}" rel="nofollow noopener noreferrer">{{.}}</a></p>{{end}}
+    {{with $r.Topics}}<ul class="topics">{{range .}}<li>{{.}}</li>{{end}}</ul>{{end}}
+    {{with $r.License}}<p class="license">{{$.T "license"}}: <strong>{{.}}</strong></p>{{end}}
+  </section>
+  {{- with $r.Languages}}
+  <section>
+    <h2>{{$.T "languages"}}</h2>
+    <svg class="langbar" viewBox="0 0 100 2" preserveAspectRatio="none" aria-hidden="true">{{range .}}<rect x="{{.Offset}}" width="{{.Width}}" height="2" fill="{{.Color}}"/>{{end}}</svg>
+    <ul class="langs">{{range .}}<li><svg class="dot" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="{{.Color}}"/></svg> {{.Name}} <span class="muted">{{.Percent}}</span></li>{{end}}</ul>
+  </section>
+  {{- end}}
+  {{- with $r.LatestRelease}}
+  <section>
+    <h2>{{$.T "latest_release"}}</h2>
+    <p>{{template "icon-tag"}} <a href="{{.URL}}">{{.Title}}</a>{{with .Date}} <time>{{.}}</time>{{end}}</p>
+  </section>
+  {{- end}}
+</aside>
+{{end}}
+
+{{define "clone"}}{{if or .Repo.CloneURL .Ref.Archives}}
+<details class="clone">
+  <summary>{{template "icon-download"}} {{.T "clone"}}</summary>
+  <div class="clone-menu">
+    {{- with .Repo.CloneURL}}
+    <p class="clone-head">{{$.T "clone_https"}}</p>
+    <pre class="clone-cmd"><code>git clone {{if not $.Ref.IsDefault}}--branch {{$.Ref.Public}} {{end}}{{.}}</code></pre>
+    <p class="muted clone-note">{{$.T "clone_note"}}</p>
+    {{- end}}
+    {{- with .Ref.Archives}}
+    <ul class="downloads">{{range .}}<li>{{template "icon-download"}} <a href="{{.URL}}" download>{{.Name}}</a></li>{{end}}</ul>
+    {{- end}}
+  </div>
+</details>
+{{end}}{{end}}

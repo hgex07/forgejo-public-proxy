@@ -1,0 +1,26 @@
+{{define "title"}}{{.T "repositories"}}{{end}}
+{{define "content"}}
+<div class="page-index">
+  {{with .Site.Description}}<p class="lead">{{.}}</p>{{end}}
+  {{- range .Data.Groups}}
+  <section class="repo-group">
+    <h2>{{.Owner}}</h2>
+    <ul class="repo-list">
+    {{- range .Repos}}
+      <li>
+        <h3><a href="{{.HomeURL}}">{{.Name}}</a>{{if .Archived}} <span class="badge">{{$.T "archived"}}</span>{{end}}</h3>
+        {{with .Description}}<p>{{.}}</p>{{end}}
+        <p class="meta">
+          {{- with .Language}}<span class="lang"><svg class="dot" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="{{.Color}}"/></svg> {{.Name}}</span>{{end}}
+          {{- range .Topics}} <span class="topic">{{.}}</span>{{end}}
+          {{- with .Updated}} <span class="muted">{{$.T "updated_on" .}}</span>{{end}}
+        </p>
+      </li>
+    {{- end}}
+    </ul>
+  </section>
+  {{- else}}
+  <p class="muted">{{.T "no_repositories"}}</p>
+  {{- end}}
+</div>
+{{end}}

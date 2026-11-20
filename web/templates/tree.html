@@ -1,0 +1,44 @@
+{{define "title"}}{{if .Data.Path}}{{.Data.Path}} · {{end}}{{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+<div class="layout">
+  <div class="primary">
+    <div class="toolbar">
+      {{template "ref-picker" .}}
+      {{if .Data.Path}}{{template "breadcrumb" .}}{{end}}
+      {{template "clone" .}}
+    </div>
+    {{template "commit-strip" .}}
+    <table class="files">
+      <thead class="visually-hidden"><tr><th>{{.T "name"}}</th><th>{{.T "last_commit"}}</th><th>{{.T "last_change"}}</th></tr></thead>
+      <tbody>
+      {{- with .Data.ParentURL}}
+        <tr><td class="name" colspan="3"><a href="{{.}}">..</a></td></tr>
+      {{- end}}
+      {{- range .Data.Entries}}
+        <tr>
+          <td class="name">
+            {{- if eq .Kind "dir"}}{{template "icon-dir"}}{{else if eq .Kind "symlink"}}{{template "icon-link"}}{{else if eq .Kind "submodule"}}{{template "icon-module"}}{{else}}{{template "icon-file"}}{{end}}
+            {{if .URL}}<a href="{{.URL}}">{{.Name}}</a>{{else}}<span>{{.Name}}</span>{{end}}
+            {{- with .Note}} <span class="muted">{{.}}</span>{{end}}
+          </td>
+          <td class="msg">{{with .Last}}{{if .URL}}<a href="{{.URL}}">{{.Subject}}</a>{{end}}{{end}}</td>
+          <td class="date">{{with .Last}}<time datetime="{{.DateISO}}">{{.Date}}</time>{{end}}</td>
+        </tr>
+      {{- end}}
+      </tbody>
+    </table>
+    {{- with .Data.Readme}}
+    <article class="readme" id="readme">
+      <h2 class="readme-name">{{template "icon-file"}} <a href="{{.URL}}">{{.Name}}</a></h2>
+      {{- if .Markdown.IsZero}}
+      <pre class="plain">{{.Text}}</pre>
+      {{- else}}
+      <div class="markdown">{{.Markdown.HTML}}</div>
+      {{- end}}
+    </article>
+    {{- end}}
+  </div>
+  {{template "sidebar" .}}
+</div>
+{{end}}

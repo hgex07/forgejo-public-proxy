@@ -1,0 +1,65 @@
+# fpp config. Strict: unknown keys are errors. See docs/SETUP.md.
+# Validate with: fpp check-config -config /etc/fpp/config.yaml
+site:
+  title: "code"
+  base_url: "https://code.example.com"
+  description: "Read-only mirror of selected projects."
+  # theme: ""                  # reserved: there is only one theme for now
+  language: en                  # en | es (interface text)
+  robots: index                 # index | noindex
+  allowed_image_hosts: []       # e.g. ["img.shields.io"] → added to CSP img-src (privacy trade-off)
+
+forgejo:
+  api_url: "http://127.0.0.1:3000"   # fpp on the Forgejo host: loopback, no TLS needed
+  root_url: "https://forgejo.lan"    # Forgejo's ROOT_URL; output lint hard-fails if it appears
+  user: "forgejo-public-proxy"
+  token: { credential: "forgejo-token" }   # systemd LoadCredential name, never the token itself
+  canary_repos:                            # MUST be unreadable by the token or the build aborts
+    - "someone/canary-private"             # private, never granted
+    - "someone/canary-public"              # public, never granted (proves the Restricted flag)
+
+publish:
+  defaults:                     # built-in defaults shown; omit any key to inherit them
+    branches: ["@default"]
+    tags: { include: [], latest: 0 }
+    history: { max_commits: 10 }
+    diffs: false
+    releases: { enabled: false, assets: false, prereleases: false }
+    archives: true
+    clone: true                 # `git clone https://<site>/<owner>/<repo>.git`: one snapshot commit per published ref
+    authors: names              # names | hidden
+    dates: day                  # day | exact
+    exclude: []                 # added to the built-in denylist (.env*, *.pem, keys, …)
+  repos:
+    - source: "me/dotfiles"
+    - source: "infra/homelab-scripts"
+      slug: "tools/homelab"       # public alias; hides internal naming
+      branches:
+        - "@default"
+        - { name: "release/2.x", as: "release-2.x" }   # names with '/' need an alias
+      tags: { include: ["v*"], latest: 3 }
+      releases: { enabled: true }
+      diffs: true
+
+gates:
+  secret_scan: { enabled: true, baseline: "/etc/fpp/secret-baseline.json" }  # reviewed false positives only
+  leak_patterns:
+    - { pattern: '(?i)\bforgejo\.lan\b', action: block }
+    - { pattern: '(?i)\b[a-z0-9-]+\.(lan|internal|home\.arpa)\b', action: warn }
+    - { pattern: '\b(10|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}(\.\d{1,3})?\b', action: warn }
+  public_emails: []             # intentionally public addresses exempt from redaction
+  limits:
+    render_max_bytes: 1048576     # larger files: "too large to display" + download
+    raw_max_bytes: 20971520       # larger: not published at all (listed in report)
+    max_files_per_ref: 20000
+    max_site_bytes: 2147483648
+    per_file_render_timeout: 2s
+
+# Optional. Without it, run `fpp apply -no-deploy` and copy <state>/staging/site
+# to your web server yourself. docs/SETUP.md §6 describes what the host receives.
+deploy:
+  target: "deploy@192.0.2.10"            # user@host, no port
+  # port: 22
+  ssh_key: { credential: "deploy-key" }
+  known_hosts: "/etc/fpp/web_known_hosts" # pinned host key(s), required
+  keep_releases: 5                       # for host-side scripts; fpp itself ignores it

@@ -1,0 +1,14 @@
+/bin/
+/dist/
+*.test
+*.out
+# never commit real configs or secrets
+/config.yaml
+*.token
+*.key
+*.pem
+/.fpp-token
+/.fpp-creds/
+/local/
+.claude/
+CLAUDE-SECURITY-*/

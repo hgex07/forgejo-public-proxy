@@ -1,0 +1,54 @@
+{{define "title"}}{{.Data.Subject}} · {{.Data.Short}} · {{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+<article class="commit">
+  <header class="commit-head">
+    <h2>{{.Data.Subject}}</h2>
+    {{- with .Data.Body}}<pre class="commit-body">{{.}}</pre>{{end}}
+    <p class="meta">
+      {{- if .Data.Author}}<span class="author">{{.Data.Author}}</span> · {{end}}<time datetime="{{.Data.DateISO}}">{{.Data.Date}}</time>
+    </p>
+    <dl class="commit-ids">
+      <dt>{{.T "commit"}}</dt><dd><code>{{.Data.OID}}</code></dd>
+      {{- range .Data.Parents}}
+      <dt>{{$.T "parent"}}</dt><dd>{{if .URL}}<a href="{{.URL}}"><code>{{.Short}}</code></a>{{else}}<code>{{.Short}}</code>{{end}}</dd>
+      {{- end}}
+    </dl>
+  </header>
+  {{- if not .Data.ChangesKnown}}
+  <p class="muted">{{.T "changes_unknown"}}</p>
+  {{- else}}
+  <h3 class="changes-head">{{.T "n_files_changed" (len .Data.Files)}}{{if .Data.Added}} <span class="add">+{{.Data.Added}}</span>{{end}}{{if .Data.Deleted}} <span class="del">−{{.Data.Deleted}}</span>{{end}}</h3>
+  <ul class="changed-files">
+  {{- range .Data.Files}}
+    <li><span class="status status-{{.Status}}">{{.Status}}</span> {{if $.Data.Diffs}}<a href="#{{.Anchor}}">{{.Path}}</a>{{else}}{{.Path}}{{end}}{{if .Binary}} <span class="muted">{{$.T "binary"}}</span>{{else}} <span class="add">+{{.Added}}</span> <span class="del">−{{.Deleted}}</span>{{end}}</li>
+  {{- end}}
+  </ul>
+  {{- if .Data.Hidden}}
+  <p class="muted">{{.T "n_changes_hidden" .Data.Hidden}}</p>
+  {{- end}}
+  {{- if .Data.Diffs}}
+  {{- range .Data.Files}}
+  <section class="diff" id="{{.Anchor}}">
+    <h4 class="diff-head"><span class="status status-{{.Status}}">{{.Status}}</span> {{.Path}}</h4>
+    {{- if .Note}}
+    <p class="muted diff-note">{{.Note}}</p>
+    {{- else}}
+    <table class="diff-table">
+      <tbody>
+      {{- range .Lines}}
+      {{- if eq .Kind "@"}}
+        <tr class="hunk"><td class="ln"></td><td class="ln"></td><td class="dc">{{.Header}}</td></tr>
+      {{- else}}
+        <tr class="{{if eq .Kind "+"}}add{{else if eq .Kind "-"}}del{{else}}ctx{{end}}"><td class="ln">{{if .Old}}{{.Old}}{{end}}</td><td class="ln">{{if .New}}{{.New}}{{end}}</td><td class="dc">{{.Kind}}{{.Text}}</td></tr>
+      {{- end}}
+      {{- end}}
+      </tbody>
+    </table>
+    {{- end}}
+  </section>
+  {{- end}}
+  {{- end}}
+  {{- end}}
+</article>
+{{end}}

@@ -1,0 +1,18 @@
+{{define "title"}}{{.T "tab_releases"}} · {{.Repo.Slug}}{{end}}
+{{define "content"}}
+{{template "repo-header" .}}
+{{- range .Data.Releases}}
+<article class="release">
+  <header>
+    <h2><a href="{{.URL}}">{{.Title}}</a>{{if .Prerelease}} <span class="badge">{{$.T "prerelease"}}</span>{{end}}</h2>
+    <p class="meta">{{template "icon-tag"}} <a href="{{.TagURL}}">{{.Tag}}</a>{{with .Date}} · <time>{{.}}</time>{{end}}</p>
+  </header>
+  {{- if not .Body.IsZero}}<div class="markdown">{{.Body.HTML}}</div>{{end}}
+  {{- with .Archives}}
+  <ul class="downloads">{{range .}}<li>{{template "icon-download"}} <a href="{{.URL}}" download>{{.Name}}</a></li>{{end}}</ul>
+  {{- end}}
+</article>
+{{- else}}
+<p class="muted">{{.T "no_releases"}}</p>
+{{- end}}
+{{end}}

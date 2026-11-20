@@ -1,0 +1,32 @@
+{{define "base"}}<!doctype html>
+<html lang="{{.Lang.Code}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+{{- if .NoIndex}}
+<meta name="robots" content="noindex">
+{{- end}}
+<title>{{template "title" .}} · {{.Site.Title}}</title>
+{{- with .Site.Description}}
+<meta name="description" content="{{.}}">
+{{- end}}
+<link rel="stylesheet" href="{{.CSS}}">
+{{- with .Canonical}}
+<link rel="canonical" href="{{.}}">
+{{- end}}
+</head>
+<body>
+<a class="skip" href="#main">{{.T "skip_to_content"}}</a>
+<header class="site-header">
+  <a class="site-title" href="/">{{.Site.Title}}</a>
+</header>
+<main id="main">
+{{template "content" .}}
+</main>
+<footer class="site-footer">
+  <p>{{.T "footer_mirror"}}</p>
+</footer>
+</body>
+</html>
+{{end}}
