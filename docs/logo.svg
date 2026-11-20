@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="128" height="128">
+<!-- fpp logo. Based on the Forgejo logo by Caesar Schinas (CC BY-SA 4.0,
+     https://creativecommons.org/licenses/by-sa/4.0/). Licensed CC BY-SA 4.0. -->
+<path d="M128 14 L226 50 V122 C226 186 186 224 128 244 C70 224 30 186 30 122 V50 Z" fill="#24262b" stroke="#24262b" stroke-width="12" stroke-linejoin="round"/><g transform="translate(56.30,54.00) scale(0.74)"><path d="M58 168 v-98 a50 50 0 0 1 50-50 h20" fill="none" stroke="#ff6600" stroke-width="25"/>
+<path d="M58 168 v-30 a50 50 0 0 1 50-50 h20" fill="none" stroke="#d40000" stroke-width="25"/>
+<circle cx="142" cy="20" r="18" fill="none" stroke="#ff6600" stroke-width="15"/><circle cx="142" cy="88" r="18" fill="none" stroke="#d40000" stroke-width="15"/>
+<circle cx="58" cy="180" r="18" fill="none" stroke="#d40000" stroke-width="15"/></g>
+</svg>

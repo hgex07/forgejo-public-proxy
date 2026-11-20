@@ -1,5 +1,7 @@
 # fpp: forgejo-public-proxy
 
+<p align="center"><img src="docs/logo.svg" alt="fpp logo, the Forgejo logo on a shield" width="200"></p>
+
 **Publish selected repositories from a private Forgejo as a static, read-only website, without exposing Forgejo to the internet.**
 
 fpp runs next to your Forgejo instance. It reads only the repos, branches and tags you
@@ -223,3 +225,7 @@ version 3 of the License, or (at your option) any later version. See [LICENSE](L
 
 The license covers fpp itself. A site rendered by fpp contains your repositories'
 content, which keeps its own licenses.
+
+The [logo](docs/logo.svg) is based on the [Forgejo](https://forgejo.org) logo by Caesar
+Schinas, used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The
+fpp logo is licensed under CC BY-SA 4.0 as well.
